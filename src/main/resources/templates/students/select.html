@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <title>Student List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+
+    <style>
+        :root {
+            --primary-color: #19378a;
+            --primary-light: #2a4ba8;
+            --primary-dark: #122a6d;
+            --accent-color: #4d638c;
+            --light-gray: #f5f7fa;
+            --border-color: #e1e5eb;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            background-color: #f8f9fc;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+            font-size: 2em;
+            text-align: center;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-left: 12rem;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(25, 55, 138, 0.1);
+        }
+
+        .add-student-link {
+            text-decoration: none;
+        }
+
+        .add-student-button {
+            padding: 12px 20px;
+            border: none;
+            background-color: var(--primary-color);
+            color: #fff;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .add-student-button:hover {
+            background-color: var(--primary-hover-color);
+            transform: scale(1.05);
+        }
+
+
+        .student-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            margin-left: 12rem;
+            overflow-x: auto;
+        }
+
+        .student-table th,
+        .student-table td {
+            padding: 12px 15px;
+            border: 1px solid var(--border-color);
+            text-align: left;
+        }
+
+        .student-table th {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .student-table tbody tr:nth-child(even) {
+            background-color: var(--light-gray);
+        }
+
+        .student-table tbody tr:hover {
+            background-color: rgba(25, 55, 138, 0.05);
+        }
+
+        .action-icons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-icons a {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+
+        .action-icons a:hover {
+            color: var(--primary-light);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            .student-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+
+        /* Dropdown Styles */
+        .searchable-dropdown .courseDropdown {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: white;
+            /* Ensure background visibility */
+            color: black;
+            /* Ensure text is visible */
+        }
+
+        .searchable-dropdown option {
+            background-color: white;
+            color: black;
+            padding: 5px;
+        }
+
+        .searchable-dropdown option:hover {
+            background-color: var(--primary-light);
+            color: white;
+        }
+
+        /* Modal Styling */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+            max-height: 80%;
+            /* Adjust height to ensure scrolling if needed */
+            overflow-y: auto;
+            /* Enable vertical scrolling */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-button {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            color: #f00;
+        }
+
+        .submit-button {
+            padding: 10px 20px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .submit-button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 50%;
+            max-height: 80%;
+            overflow-y: auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-button {
+            float: right;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close-button:hover {
+            color: #f00;
+        }
+
+        .student-details-card,
+        .confirm-delete-card,
+        .form-modal-card {
+            padding: 20px;
+            border: 1px solid #e1e5eb;
+            border-radius: 10px;
+            background-color: #f8f9fc;
+            margin-top: 20px;
+        }
+
+        .confirm-delete-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div th:replace="~{dashboardLayout/base::page_navbar}"></div>
+    <div th:replace="~{dashboardLayout/base::page_sidebar}"></div>
+
+    <div class="container">
+        <h1>All Students</h1>
+
+        <div class="search-container">
+            <input type="text" id="searchInput" class="search-input" placeholder="Search for students..."
+                onkeyup="searchTable()">
+            <a href="#" class="add-student-link">
+                <button class="add-student-button" onclick="openModal(); openInsertModal();">Add New Student</button>
+            </div>
+
+
+        <div id="updateFormContainer" th:replace="~{students/update::update_form}"></div>
+        <div id="insertFormContainer" th:replace="~{students/insertModel::insert_form}"></div>
+        <table class="student-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Enrollment Date</th>
+                    <th>Program</th>
+                    <th>User</th>
+                    <th>Courses</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="studentTableBody">
+                <tr th:each="student : ${students}">
+                    <td th:text="${student.studentId}"></td>
+                    <td th:text="${student.firstName}"></td>
+                    <td th:text="${student.lastName}"></td>
+                    <td th:text="${student.email}"></td>
+                    <td th:text="${student.phoneNumber}"></td>
+                    <td th:text="${student.enrollmentDate}"></td>
+                    <td th:text="${student.programName}"></td>
+                    <td th:text="${student.userName}"></td>
+                    <td>
+                        <span th:each="courseName, iterStat : ${student.courseNames}"
+                            th:text="${courseName} + (iterStat.last ? '' : ', ')"></span>
+                    </td>
+                    <td class="action-icons">
+                        <!-- Update Link -->
+                        <a href="#" class="update-link" 
+                           onclick="openUpdateModal(this.getAttribute('data-student-id'))" 
+                           th:attr="data-student-id=${student.studentId}" 
+                           title="Update">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        
+                        <!-- View Link -->
+                        <a href="#" class="view-link" 
+                           th:attr="data-student-id=${student.studentId}" 
+                           title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        
+                        <!-- Delete Link -->
+                        <a href="#" class="delete-link" 
+                           th:attr="data-student-id=${student.studentId}" 
+                           title="Delete">
+                            <i class="fas fa-trash-alt"></i>
+                        </a>
+                    </td>
+                    
+                </tr>
+            </tbody>
+        </table>
+
+        <button id="loadMoreBtn" onclick="loadMore()" style="float: right; padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">Load More</button>
+    </div>
+
+
+    <!-- Modal for Student Details -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('studentModal')">&times;</span>
+            <h2>Student Details</h2>
+            <div id="studentDetails" class="student-details-card"></div>
+        </div>
+    </div>
+
+    <!-- Modal for Delete Confirmation -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal('deleteModal')">&times;</span>
+            <h2>Confirm Deletion</h2>
+            <div id="deleteDetails" class="confirm-delete-card">
+                <p>Are you sure you want to delete this student?</p>
+                <div class="confirm-delete-buttons">
+                    <button id="confirmDelete">Yes</button>
+                    <button onclick="closeModal('deleteModal')">No</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+     <script th:src="@{/js/script.js}"></script>
+    <script th:src="@{/js/models.js}"></script>
+    
+  <!-- JavaScript for Update Modal -->
+<script>
+    // Open Update Modal
+    function openUpdateModal(studentId) {
+        // Set studentId in session storage
+        sessionStorage.setItem('selectedStudentId', studentId);
+
+        // Alert the student ID to confirm it's stored
+        alert("Selected Student ID: " + studentId);
+
+        // Fetch student data based on ID
+        fetch(`/api/students/${studentId}`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate the form fields
+                document.getElementById('userName').value = data.userName || '';
+                document.getElementById('programId').value = data.programId || '';
+                document.getElementById('firstName').value = data.firstName || '';
+                document.getElementById('lastName').value = data.lastName || '';
+                document.getElementById('email').value = data.email || '';
+                document.getElementById('phoneNumber').value = data.phoneNumber || '';
+                document.getElementById('enrollmentDate').value = data.enrollmentDate || '';
+
+                // Populate multi-select courses
+                const courseIds = data.courseIds || [];
+                const courseOptions = document.getElementById('courseIds').options;
+                for (let option of courseOptions) {
+                    option.selected = courseIds.includes(parseInt(option.value));
+                }
+
+                // Open modal
+                document.getElementById('updateStudentModal').style.display = 'block';
+            })
+            .catch(err => console.error('Error loading student data:', err));
+    }
+
+    // Submit Update Form
+    document.getElementById('submitUpdateForm').addEventListener('click', () => {
+        const studentId = sessionStorage.getItem('selectedStudentId');
+
+        const formData = {
+            userName: document.getElementById('userName').value,
+            programId: document.getElementById('programId').value,
+            firstName: document.getElementById('firstName').value,
+            lastName: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            phoneNumber: document.getElementById('phoneNumber').value,
+            enrollmentDate: document.getElementById('enrollmentDate').value,
+            courseIds: Array.from(document.getElementById('courseIds').selectedOptions).map(opt => opt.value)
+        };
+
+        fetch(`/api/students/update/${studentId}`, {
+            method: 'PUT', // Use PUT method
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        })
+        .then(response => {
+            if (response.ok) {
+                alert('Student updated successfully!');
+                window.location.reload();
+            } else {
+                alert('Failed to update student.');
+            }
+        })
+        .catch(err => console.error('Error updating student:', err));
+    });
+
+    // Close Modal
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+        const modal = document.getElementById('updateStudentModal');
+        if (event.target === modal) {
+            closeModal('updateStudentModal');
+        }
+    };
+</script>
+</body>
+
+</html>

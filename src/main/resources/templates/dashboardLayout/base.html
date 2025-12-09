@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - School Attendance System</title>
+    <link rel="stylesheet" href="styles.css">
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" th:fragment="page_navbar">
+        <div class="navbar-brand">
+            <img th:src="@{/images/logo.png}" alt="Logo"> <!-- Replace with your logo -->
+            <span>School Attendance System</span>
+        </div>
+        <ul>
+            <li><a href="#notifications">Notifications</a></li>
+            <li><a href="#profile">Profile</a></li>
+            <li><a href="#settings">Settings</a></li>
+<li><a href="#logout" id="logout-link">Logout</a></li>
+        </ul>
+        <script>
+         document.getElementById('logout-link').addEventListener('click', function (event) {
+    event.preventDefault(); // Prevent default link behavior
+
+    // Send a GET request to logout
+    fetch('/logout', {
+        method: 'GET',
+    })
+    .then(async response => {
+        const contentType = response.headers.get("content-type");
+        let responseBody;
+
+        if (contentType && contentType.includes("application/json")) {
+            responseBody = await response.json(); // Parse JSON response
+        } else {
+            responseBody = await response.text(); // Parse text response
+        }
+
+        console.log('Response Status:', response.status); // Log status code
+        console.log('Response Headers:', response.headers); // Log headers
+        console.log('Response Body:', responseBody); // Log response body
+
+        if (response.ok) {
+            // If successful, show a message and redirect
+            alert(responseBody.message || "Logged out successfully!");
+            window.location.href = '/login'; // Redirect to login page
+        } else {
+            // Show error if the logout failed
+            alert(responseBody.message || "Logout failed. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error); // Log error
+        alert('An error occurred. Please try again.');
+    });
+});
+
+
+        </script>
+    </nav>
+    
+    <div class="dashboard-layout"  th:fragment="page_sidebar">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <!-- Profile Section -->
+            <div class="profile-section">
+                <img th:src="${session.user.studentProfile != null ? session.user.studentProfile : '/images/profile.png'}" alt="Profile Image" class="profile-img">
+
+                <h3 th:text="${session.user.username}"></h3>
+            </div>
+
+            <!-- Random Links -->
+            <ul class="random-links">
+                <li><a th:href="@{/students}" >students</a></li>
+                <li><a th:href="@{/programs}">programs</a></li>
+                <li><a th:href="@{/courses}"></ath:href>courses</a></li>
+                <li><a th:href="@{/classes/select}">classes</a></li>
+                <li><a th:href="@{/attendance/class}">Attendance</a></li>
+                <li><a href="#link6">Records</a></li>
+                <li><a href="#link7">Instructors</a></li>
+                <li><a href="#link8">Reports</a></li>
+            </ul>
+        </aside>
+
+</div>
+      <!-- Main Content -->
+<main class="main-content" th:fragment="page_mainContent">
+    <section id="dashboard">
+        <h1>Welcome to the Dashboard</h1>
+        <p>Here you can manage attendance, view reports, and perform other tasks.</p>
+
+        <!-- Cards Section -->
+        <div class="cards-container">
+            <div class="card">
+                <h3 class="card-title">Students</h3>
+                <p class="card-number">120</p>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Teachers</h3>
+                <p class="card-number">15</p>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Courses</h3>
+                <p class="card-number">8</p>
+            </div>
+            <div class="card">
+                <h3 class="card-title">Classes</h3>
+                <p class="card-number">30</p>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">programs</h3>
+                <p class="card-number">27</p>
+            </div>
+        </div>
+
+        <div class="graphs-container">
+            <div class="graph">
+                <h3>Attendance Overview</h3>
+                <canvas id="attendanceGraph"></canvas>
+            </div>
+            <div class="graph">
+                <h3>Performance Overview</h3>
+                <canvas id="performanceGraph"></canvas>
+            </div>
+            <div class="graph">
+                <h3>Monthly Reports Overview</h3>
+                <canvas id="reportsGraph"></canvas>
+            </div>
+        </div>
+        
+    </section>
+</main>
+
+
+   </body>
+</html>

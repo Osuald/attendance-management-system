@@ -1,0 +1,86 @@
+<div
+      id="insertClassModal"
+      class="modal"
+      style="display: none"
+      th:fragment="insert_class_form"
+    >
+      <div class="modal-content">
+        <!-- Close Button -->
+        <span class="close-button" onclick="closeModal('insertClassModal')"
+          >&times;</span
+        >
+        <h2>Add New Class</h2>
+
+        <!-- Success/Error Messages -->
+        <div style="color: green;">
+          <p id="insertSuccessMessage"></p>
+        </div>
+        <div style="color: red;">
+          <p id="insertErrorMessage"></p>
+        </div>
+        
+
+        <!-- Form -->
+        <form
+          id="insertClassForm"
+          
+        >
+          <!-- Program Dropdown -->
+          <label for="programDropdown">Select Program:</label>
+          <select
+            id="programDropdown"
+            name="programId"
+            required
+            onchange="loadCoursesByProgram()"
+          >
+            <option value="">Select a Program</option>
+            <option
+              th:each="program : ${programs}"
+              th:value="${program.programId}"
+              th:text="${program.programName}"
+            ></option>
+          </select>
+
+          <!-- Course Dropdown -->
+          <label for="courseDropdown">Select Course:</label>
+          <select id="courseDropdown" name="courseId" required>
+            <option value="">Select a Course</option>
+          </select>
+
+          <!-- Instructor Dropdown -->
+          <label for="insertInstructorId">Select Instructor:</label>
+          <select id="insertInstructorId" name="instructorId" required>
+            <option value="">Select an Instructor</option>
+            <option
+              th:each="instructor : ${instructors}"
+              th:value="${instructor.instructorId}"
+              th:text="${instructor.instructorName}"
+            ></option>
+          </select>
+
+          <!-- Class Code -->
+          <label for="insertClassCode">Class Code:</label>
+          <input
+            type="text"
+            id="insertClassCode"
+            name="classCode"
+            required
+            class="form-control"
+            readonly
+          />
+
+          <!-- Schedule -->
+          <label for="insertClassSchedule">Schedule:</label>
+          <input
+            type="date"
+            id="insertClassSchedule"
+            name="classSchedule"
+            required
+            class="form-control"
+          />
+
+          <!-- Submit Button -->
+          <button type="submit">Add Class</button>
+        </form>
+      </div>
+    </div>

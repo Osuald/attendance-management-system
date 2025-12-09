@@ -1,0 +1,27 @@
+<!-- Insert Program Modal -->
+<div id="addProgramModal" class="modal" th:fragment="insert_form">
+    <div class="modal-content">
+        <span class="close-button" onclick="closeModal()">&times;</span>
+        <h2>Add New Program</h2>
+
+        <form th:action="@{/api/programs}" method="post" th:object="${programDTO}">
+
+            <!-- Program Name -->
+            <label for="programName">Program Name:</label>
+            <input type="text" id="programName" th:field="*{programName}" required />
+        
+            <!-- Program Description -->
+            <label for="programDescription">Description:</label>
+            <textarea id="programDescription" th:field="*{programDescription}" required></textarea>
+        
+            <!-- Submit Button -->
+            <button type="submit">Add Program</button>
+        </form>
+        
+    </div>
+</div>
+
+<!-- Update Button Fragment -->
+<a th:fragment="updateBtn" href="#" class="update-link" onclick="openUpdateModal(this.getAttribute('data-program-id'))" th:attr="data-program-id=${program.programId}" title="Update">
+    <i class="fas fa-edit"></i>
+</a>

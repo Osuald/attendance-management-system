@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - School Attendance System</title>
+    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <style>
+        /* Alert Styling */
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Form Styling */
+        .login-container {
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #19378a; /* Dark blue */
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #19378a;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+
+        button:hover {
+            background-color: #1550a3; /* Slightly lighter blue */
+        }
+
+        a {
+            text-decoration: none;
+            color: #19378a;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div th:replace="~{layout/base :: page_navbar}"></div>
+
+    <!-- Login Section -->
+    <section id="login" class="login-container">
+        <h2>Login</h2>
+<!-- Display Logout Success Message -->
+<div id="logoutMessage" th:if="${logoutMessage}" style="color: green; text-align: center; margin-bottom: 10px;">
+    <p th:text="${logoutMessage}"></p>
+</div>
+
+        <!-- Alert Messages -->
+        <!-- Flash message from RedirectAttributes -->
+        <div class="alert alert-success" th:if="${message}" th:text="${message}"></div>
+        
+        <!-- Error message from RedirectAttributes -->
+        <div class="alert alert-danger" th:if="${error}" th:text="${error}"></div>
+
+        <!-- Login Form -->
+        <form th:action="@{/api/user/login}" method="post" id="loginForm">
+            <!-- Role Dropdown -->
+            <label for="role">Select Role:</label>
+            <select id="role" name="role" required>
+                <option value="" disabled selected>Choose your role</option>
+                <option value="ADMINISTRATOR">Administrator</option>
+                <option value="INSTRUCTOR">Instructor</option>
+                <option value="STUDENT">Student</option>
+                <option value="MODERATOR">Moderator</option>
+                <option value="GUEST">Guest</option>
+                <option value="SUPERADMIN">Superadmin</option>
+            </select>
+            <div class="error-message" id="roleError">Please select a role.</div>
+
+            <!-- Username -->
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" placeholder="Enter your username" required>
+            <div class="error-message" id="usernameError">Please enter your username.</div>
+
+            <!-- Password -->
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            <div class="error-message" id="passwordError">Please enter your password.</div>
+
+            <!-- Forgot Password -->
+            <a th:href="@{/forgot-password}" class="forgot-password">Forgot Password?</a>
+
+            <!-- Submit Button -->
+            <button type="submit">Login</button>
+
+            <!-- Sign Up Link -->
+            <p>Don't have an account? <a th:href="@{/signup}" class="signup-link">Sign Up</a></p>
+        </form>
+<script>
+    window.onload = function () {
+    const logoutMessage = document.getElementById('logoutMessage');
+    if (logoutMessage) {
+        // Hide the message after 5 seconds
+        setTimeout(() => {
+            logoutMessage.style.display = 'none';
+        }, 5000); // 5000ms = 5 seconds
+    }
+};
+
+</script>
+        <!-- JavaScript for Validation and Redirection -->
+        <script th:inline="javascript">
+            // Get messages from Thymeleaf
+            const message = /*[[${message}]]*/ null;
+            const error = /*[[${error}]]*/ null;
+            
+            document.getElementById('loginForm').addEventListener('submit', function (event) {
+                let valid = true;
+
+                // Validate role
+                const role = document.getElementById('role');
+                const roleError = document.getElementById('roleError');
+                if (!role.value) {
+                    roleError.style.display = 'block';
+                    valid = false;
+                } else {
+                    roleError.style.display = 'none';
+                }
+
+                // Validate username
+                const username = document.getElementById('username');
+                const usernameError = document.getElementById('usernameError');
+                if (username.value.trim() === '') {
+                    usernameError.style.display = 'block';
+                    valid = false;
+                } else {
+                    usernameError.style.display = 'none';
+                }
+
+                // Validate password
+                const password = document.getElementById('password');
+                const passwordError = document.getElementById('passwordError');
+                if (password.value.trim() === '') {
+                    passwordError.style.display = 'block';
+                    valid = false;
+                } else {
+                    passwordError.style.display = 'none';
+                }
+
+                // Prevent form submission if validation fails
+                if (!valid) {
+                    event.preventDefault();
+                }
+            });
+
+            // Handle redirect based on success message
+            if (message && message.includes("Login successful")) {
+                setTimeout(() => {
+                    window.location.href = /*[[@{/dashboard}]]*/ '/dashboard';
+                }, 2000);
+            }
+
+            // Clear messages after display
+            if (message || error) {
+                setTimeout(() => {
+                    fetch(/*[[@{/api/user/clear-messages}]]*/ '/api/user/clear-messages');
+                }, 3000);
+            }
+        </script>
+    </section>
+
+    <!-- Footer -->
+    <div th:replace="~{layout/base :: page_footer}"></div>
+</body>
+</html>
